@@ -6,13 +6,12 @@ import (
 	"syscall/js"
 )
 
-// Game constants
 const (
 	CanvasWidth   = 400
 	CanvasHeight  = 400
 	WorldWidth    = 800
 	WorldHeight   = 800
-	FrameDuration = 8 // Controls animation speed
+	FrameDuration = 8 // ~7.5 FPS, internet says this is good for this type of animation
 )
 
 type Rect struct {
@@ -31,12 +30,12 @@ type Player struct {
 	Keys  map[string]bool
 	Speed float64
 	Rect
-	FrameIndex int // Current animation frame
-	Tick       int // Animation timer
+	FrameIndex int
+	Tick       int
 }
 
 func (p *Player) Update(obstacles []Rect) {
-	// Copy current position to restore if there's a collision
+	// save snapshot
 	prevX, prevY := p.X, p.Y
 	moving := false
 
@@ -58,7 +57,7 @@ func (p *Player) Update(obstacles []Rect) {
 		moving = true
 	}
 
-	// World boundaries
+	// World bounds
 	if p.X < 0 {
 		p.X = 0
 	}
@@ -72,22 +71,22 @@ func (p *Player) Update(obstacles []Rect) {
 		p.Y = WorldHeight - p.Height
 	}
 
-	// Collision detection
+	// detect collisions
 	for _, obstacle := range obstacles {
 		if p.Intersects(&obstacle) {
-			p.X, p.Y = prevX, prevY // Revert to previous position
+			p.X, p.Y = prevX, prevY // restore
 			break
 		}
 	}
 
-	// Animation update
 	if moving {
 		p.Tick++
 		if p.Tick%FrameDuration == 0 {
 			p.FrameIndex++
 		}
 	} else {
-		p.FrameIndex = 0 // Idle state
+		// not moving
+		p.FrameIndex = 0
 	}
 }
 
