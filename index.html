@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Go WASM Example</title>
+    <style>
+    #the-canvas {
+      border: 2px solid black;
+      background-color: #f0f0f0;
+    }
+    </style>
+    <script src="vendor/wasm_exec.js"></script>
+    <script type="module">
+      const go = new Go();
+      const main = await fetch("./main.wasm")
+      const result = await WebAssembly.instantiateStreaming(main, go.importObject)
+      go.run(result.instance);
+    </script>
+  </head>
+  <body>
+    <canvas id="the-canvas" width="400" height="400"></canvas>
+  </body>
+</html>
