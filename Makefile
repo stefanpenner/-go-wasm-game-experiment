@@ -10,4 +10,6 @@ main:
 	# GOOS=js GOARCH=wasm go build o main.wasm main.go
 	GOOS=js GOARCH=wasm go build -ldflags="-s -w=0" -o main.wasm
 
-	python3 -m http.server
+	python3 -m http.server &
+	open http://localhost:8000
+	fg
