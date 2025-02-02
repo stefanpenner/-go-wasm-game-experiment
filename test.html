@@ -4,11 +4,12 @@
 <body>
   <h1>Go WASM Test Runner</h1>
   <script src="vendor/wasm_exec.js"></script>
-  <script>
+  <script type="module">
     const go = new Go();
-    WebAssembly.instantiateStreaming(fetch('test.wasm'), go.importObject).then((result) => {
-      go.run(result.instance);
-    });
+    const test = await fetch('test.wasm')
+    const result = await WebAssembly.instantiateStreaming(test, go.importObject)
+
+    go.run(result.instance);
   </script>
 </body>
 </html>
