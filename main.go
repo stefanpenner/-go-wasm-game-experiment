@@ -41,6 +41,7 @@ func startGameLoop(w *World, c *Canvas, p *Player, ctx js.Value, obstacles []Rec
 	loop = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		p.Update(w, obstacles)
 
+		// AI code to ensure the camera is in the right spot
 		cameraX := clamp(p.X-c.Width/2+p.Rect.Width/2, 0, w.Width-c.Width)
 		cameraY := clamp(p.Y-c.Height/2+p.Rect.Height/2, 0, w.Height-c.Height)
 
