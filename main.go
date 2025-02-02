@@ -42,8 +42,8 @@ func startGameLoop(w *World, c *Canvas, p *Player, ctx js.Value, obstacles []Rec
 		p.Update(w, obstacles)
 
 		// AI code to ensure the camera is in the right spot
-		cameraX := clamp(p.X-c.Width/2+p.Rect.Width/2, 0, w.Width-c.Width)
-		cameraY := clamp(p.Y-c.Height/2+p.Rect.Height/2, 0, w.Height-c.Height)
+		cameraX := clamp(p.Point.X-c.Width/2+p.Width/2, 0, w.Width-c.Width)
+		cameraY := clamp(p.Point.Y-c.Height/2+p.Height/2, 0, w.Height-c.Height)
 
 		ctx.Call("clearRect", 0, 0, c.Width, c.Height)
 

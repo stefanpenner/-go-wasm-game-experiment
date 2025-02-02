@@ -6,24 +6,31 @@ import (
 	"syscall/js"
 )
 
+type Keys map[string]bool
+
+type Point struct {
+	X float64
+	Y float64
+}
+
 type Player struct {
-	Keys  map[string]bool
-	Speed float64
-	Rect
+	Keys
+	Speed            float64
 	FrameIndex, Tick int
-	X, Y             float64
+	Rect
+	Point
 }
 
 func (p *Player) Update(w *World, obstacles []Rect) {
-	prevX, prevY := p.X, p.Y
+	saved := p.Point
 	moving := p.handleMovement()
 
 	p.clampToWorldBounds(w)
 
 	for _, obstacle := range obstacles {
-		if p.Rect.Intersects(obstacle) {
-			Log(fmt.Sprintf("did Intersect: test person: %v obstacle: %v", p, obstacle))
-			p.X, p.Y = prevX, prevY
+		if p.Intersects(obstacle) {
+			// there was an intersection, so we must restore as a collision did occure
+			p.Point = saved
 			break
 		}
 	}
@@ -34,27 +41,27 @@ func (p *Player) Update(w *World, obstacles []Rect) {
 func (p *Player) handleMovement() bool {
 	moving := false
 	if p.Keys["ArrowUp"] {
-		p.Y -= p.Speed
+		p.Point.Y -= p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowDown"] {
-		p.Y += p.Speed
+		p.Point.Y += p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowLeft"] {
-		p.X -= p.Speed
+		p.Point.X -= p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowRight"] {
-		p.X += p.Speed
+		p.Point.X += p.Speed
 		moving = true
 	}
 	return moving
 }
 
 func (p *Player) clampToWorldBounds(w *World) {
-	p.X = clamp(p.X, 0, w.Width-p.Rect.Width)
-	p.Y = clamp(p.Y, 0, w.Height-p.Rect.Height)
+	p.Point.X = clamp(p.Point.X, 0, w.Width-p.Width)
+	p.Point.Y = clamp(p.Point.Y, 0, w.Height-p.Height)
 }
 
 func (p *Player) updateAnimation(moving bool) {
@@ -73,13 +80,13 @@ func (p *Player) updateAnimation(moving bool) {
 
 func (p *Player) Draw(ctx js.Value, cameraX, cameraY float64) {
 	scale := 1.0 + 0.1*math.Sin(float64(p.FrameIndex)*0.5)
-	size := p.Rect.Width * scale
+	size := p.Width * scale
 	color := fmt.Sprintf("rgb(%d,%d,%d)", (p.FrameIndex*40)%255, (p.FrameIndex*85)%255, (p.FrameIndex*60)%255)
 
 	ctx.Set("fillStyle", color)
 	ctx.Call("fillRect",
-		p.X-cameraX-(size-p.Rect.Width)/2,
-		p.Y-cameraY-(size-p.Rect.Height)/2,
+		p.Point.X-cameraX-(size-p.Width)/2,
+		p.Point.Y-cameraY-(size-p.Height)/2,
 		size, size,
 	)
 }
