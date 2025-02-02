@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+  <h1>Go WASM Test Runner</h1>
+  <script src="vendor/wasm_exec.js"></script>
+  <script>
+    const go = new Go();
+    WebAssembly.instantiateStreaming(fetch('test.wasm'), go.importObject).then((result) => {
+      go.run(result.instance);
+    });
+  </script>
+</body>
+</html>
