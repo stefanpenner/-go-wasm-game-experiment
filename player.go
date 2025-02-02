@@ -22,9 +22,7 @@ func (p *Player) Update(w *World, obstacles []Rect) {
 
 	p.clampToWorldBounds(w)
 
-	Log(fmt.Sprintf("Intersect Check person:%v obstacles: %d", p, len(obstacles)))
 	for _, obstacle := range obstacles {
-		Log(fmt.Sprintf(" - obstacle: %v", obstacle))
 		if p.Intersects(obstacle) {
 			// there was an intersection, so we must restore as a collision did occure
 			p.Rect = saved
