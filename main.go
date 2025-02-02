@@ -42,8 +42,8 @@ func startGameLoop(w *World, c *Canvas, p *Player, ctx js.Value, obstacles []Rec
 		p.Update(w, obstacles)
 
 		// AI code to ensure the camera is in the right spot
-		cameraX := clamp(p.Point.X-c.Width/2+p.Width/2, 0, w.Width-c.Width)
-		cameraY := clamp(p.Point.Y-c.Height/2+p.Height/2, 0, w.Height-c.Height)
+		cameraX := clamp(p.X-c.Width/2+p.Width/2, 0, w.Width-c.Width)
+		cameraY := clamp(p.Y-c.Height/2+p.Height/2, 0, w.Height-c.Height)
 
 		ctx.Call("clearRect", 0, 0, c.Width, c.Height)
 
@@ -69,15 +69,39 @@ func main() {
 	ctx := canvasElement.Call("getContext", "2d")
 
 	player := &Player{
-		Rect:  Rect{X: 10, Y: 10, Width: 30, Height: 30},
+		Rect: Rect{
+			Point: Point{
+				X: 10,
+				Y: 10,
+			},
+			Width: 30, Height: 30,
+		},
 		Speed: 3,
 		Keys:  make(map[string]bool),
 	}
 
 	obstacles := []Rect{
-		{X: 150, Y: 150, Width: 100, Height: 100},
-		{X: 500, Y: 300, Width: 150, Height: 50},
-		{X: 300, Y: 600, Width: 200, Height: 100},
+		{
+			Point: Point{
+				X: 150,
+				Y: 150,
+			},
+			Width: 100, Height: 100,
+		},
+		{
+			Point: Point{
+				X: 500,
+				Y: 300,
+			},
+			Width: 150, Height: 50,
+		},
+		{
+			Point: Point{
+				X: 300,
+				Y: 600,
+			},
+			Width: 200, Height: 100,
+		},
 	}
 
 	document.Call("addEventListener", "keydown", handleKey(player, true))

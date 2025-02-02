@@ -15,13 +15,16 @@ func TestPlayerUpdate(t *testing.T) {
 		{
 			name: "move right without obstacles",
 			player: Player{
-				Point: Point{
-					X: 0,
-					Y: 0,
-				},
 				Speed: 5,
-				Rect:  Rect{Width: 10, Height: 10},
-				Keys:  Keys{"ArrowRight": true},
+				Rect: Rect{
+					Point: Point{
+						X: 0,
+						Y: 0,
+					},
+					Width:  10,
+					Height: 10,
+				},
+				Keys: Keys{"ArrowRight": true},
 			},
 			world:     World{Width: 100, Height: 100},
 			obstacles: []Rect{},
@@ -33,17 +36,26 @@ func TestPlayerUpdate(t *testing.T) {
 		{
 			name: "blocked by obstacle",
 			player: Player{
-				Point: Point{
-					X: 0,
-					Y: 0,
-				},
 				Speed: 5,
-				Rect:  Rect{Width: 10, Height: 10},
-				Keys:  Keys{"ArrowRight": true},
+				Rect: Rect{
+					Point: Point{
+						X: 0,
+						Y: 0,
+					},
+					Width:  10,
+					Height: 10,
+				},
+				Keys: Keys{"ArrowRight": true},
 			},
 			world: World{Width: 100, Height: 100},
 			obstacles: []Rect{
-				{X: 5, Y: 0, Width: 10, Height: 10},
+				{
+					Point: Point{
+						X: 5,
+						Y: 0,
+					},
+					Width: 10, Height: 10,
+				},
 			},
 			want: Point{
 				X: 0,
@@ -53,13 +65,16 @@ func TestPlayerUpdate(t *testing.T) {
 		{
 			name: "world boundary collision",
 			player: Player{
-				Point: Point{
-					X: 95,
-					Y: 95,
-				},
 				Speed: 10,
-				Rect:  Rect{Width: 10, Height: 10},
-				Keys:  Keys{"ArrowRight": true, "ArrowDown": true},
+				Rect: Rect{
+					Point: Point{
+						X: 95,
+						Y: 95,
+					},
+					Width:  10,
+					Height: 10,
+				},
+				Keys: Keys{"ArrowRight": true, "ArrowDown": true},
 			},
 			world:     World{Width: 100, Height: 100},
 			obstacles: []Rect{},
@@ -71,13 +86,15 @@ func TestPlayerUpdate(t *testing.T) {
 		{
 			name: "diagonal movement",
 			player: Player{
-				Point: Point{
-					X: 50,
-					Y: 50,
-				},
 				Speed: 5,
-				Rect:  Rect{Width: 10, Height: 10},
-				Keys:  Keys{"ArrowRight": true, "ArrowDown": true},
+				Rect: Rect{
+					Point: Point{
+						X: 50,
+						Y: 50,
+					},
+					Width: 10, Height: 10,
+				},
+				Keys: Keys{"ArrowRight": true, "ArrowDown": true},
 			},
 			world:     World{Width: 100, Height: 100},
 			obstacles: []Rect{},
@@ -89,13 +106,15 @@ func TestPlayerUpdate(t *testing.T) {
 		{
 			name: "no movement when no keys pressed",
 			player: Player{
-				Point: Point{
-					X: 50,
-					Y: 50,
-				},
 				Speed: 5,
-				Rect:  Rect{Width: 10, Height: 10},
-				Keys:  Keys{},
+				Rect: Rect{
+					Point: Point{
+						X: 50,
+						Y: 50,
+					},
+					Width: 10, Height: 10,
+				},
+				Keys: Keys{},
 			},
 			world:     World{Width: 100, Height: 100},
 			obstacles: []Rect{},
@@ -165,11 +184,13 @@ func TestPlayerClampToWorldBounds(t *testing.T) {
 		{
 			name: "within bounds",
 			player: Player{
-				Point: Point{
-					X: 50,
-					Y: 50,
+				Rect: Rect{
+					Point: Point{
+						X: 50,
+						Y: 50,
+					},
+					Width: 10, Height: 10,
 				},
-				Rect: Rect{Width: 10, Height: 10},
 			},
 			world: World{Width: 100, Height: 100},
 			want: Point{
@@ -180,11 +201,13 @@ func TestPlayerClampToWorldBounds(t *testing.T) {
 		{
 			name: "outside right bound",
 			player: Player{
-				Point: Point{
-					X: 95,
-					Y: 50,
+				Rect: Rect{
+					Point: Point{
+						X: 95,
+						Y: 50,
+					},
+					Width: 10, Height: 10,
 				},
-				Rect: Rect{Width: 10, Height: 10},
 			},
 			world: World{Width: 100, Height: 100},
 			want: Point{
@@ -195,11 +218,13 @@ func TestPlayerClampToWorldBounds(t *testing.T) {
 		{
 			name: "outside bottom bound",
 			player: Player{
-				Point: Point{
-					X: 50,
-					Y: 95,
+				Rect: Rect{
+					Point: Point{
+						X: 50,
+						Y: 95,
+					},
+					Width: 10, Height: 10,
 				},
-				Rect: Rect{Width: 10, Height: 10},
 			},
 			world: World{Width: 100, Height: 100},
 			want: Point{
@@ -210,11 +235,14 @@ func TestPlayerClampToWorldBounds(t *testing.T) {
 		{
 			name: "outside negative bounds",
 			player: Player{
-				Point: Point{
-					X: -5,
-					Y: -5,
+				Rect: Rect{
+					Width:  10,
+					Height: 10,
+					Point: Point{
+						X: -5,
+						Y: -5,
+					},
 				},
-				Rect: Rect{Width: 10, Height: 10},
 			},
 			world: World{Width: 100, Height: 100},
 			want: Point{

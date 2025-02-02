@@ -7,9 +7,7 @@ main:
 	# GOOS=js GOARCH=wasm go build o main.wasm main.go
 	GOOS=js GOARCH=wasm go build -ldflags="-s -w=0" -o main.wasm
 
-	python3 -m http.server &
-	open http://localhost:8000
-	fg
+	python3 -m http.server
 
 test_native:
 	GOOS=darwin GOARCH=arm64 go test ./rect.go ./rect_test.go

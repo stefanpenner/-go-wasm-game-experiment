@@ -1,7 +1,13 @@
 package main
 
+type Point struct {
+	X float64
+	Y float64
+}
+
 type Rect struct {
-	X, Y, Width, Height float64
+	Width, Height float64
+	Point
 }
 
 func (r *Rect) Intersects(other Rect) bool {

@@ -6,31 +6,28 @@ import (
 	"syscall/js"
 )
 
-type Keys map[string]bool
-
-type Point struct {
-	X float64
-	Y float64
-}
-
-type Player struct {
-	Keys
-	Speed            float64
-	FrameIndex, Tick int
-	Rect
-	Point
-}
+type (
+	Keys   map[string]bool
+	Player struct {
+		Keys
+		Speed            float64
+		FrameIndex, Tick int
+		Rect
+	}
+)
 
 func (p *Player) Update(w *World, obstacles []Rect) {
-	saved := p.Point
+	saved := p.Rect
 	moving := p.handleMovement()
 
 	p.clampToWorldBounds(w)
 
+	Log(fmt.Sprintf("Intersect Check person:%v obstacles: %d", p, len(obstacles)))
 	for _, obstacle := range obstacles {
+		Log(fmt.Sprintf(" - obstacle: %v", obstacle))
 		if p.Intersects(obstacle) {
 			// there was an intersection, so we must restore as a collision did occure
-			p.Point = saved
+			p.Rect = saved
 			break
 		}
 	}
@@ -41,27 +38,27 @@ func (p *Player) Update(w *World, obstacles []Rect) {
 func (p *Player) handleMovement() bool {
 	moving := false
 	if p.Keys["ArrowUp"] {
-		p.Point.Y -= p.Speed
+		p.Y -= p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowDown"] {
-		p.Point.Y += p.Speed
+		p.Y += p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowLeft"] {
-		p.Point.X -= p.Speed
+		p.X -= p.Speed
 		moving = true
 	}
 	if p.Keys["ArrowRight"] {
-		p.Point.X += p.Speed
+		p.X += p.Speed
 		moving = true
 	}
 	return moving
 }
 
 func (p *Player) clampToWorldBounds(w *World) {
-	p.Point.X = clamp(p.Point.X, 0, w.Width-p.Width)
-	p.Point.Y = clamp(p.Point.Y, 0, w.Height-p.Height)
+	p.X = clamp(p.X, 0, w.Width-p.Width)
+	p.Y = clamp(p.Y, 0, w.Height-p.Height)
 }
 
 func (p *Player) updateAnimation(moving bool) {
@@ -85,8 +82,8 @@ func (p *Player) Draw(ctx js.Value, cameraX, cameraY float64) {
 
 	ctx.Set("fillStyle", color)
 	ctx.Call("fillRect",
-		p.Point.X-cameraX-(size-p.Width)/2,
-		p.Point.Y-cameraY-(size-p.Height)/2,
+		p.X-cameraX-(size-p.Width)/2,
+		p.Y-cameraY-(size-p.Height)/2,
 		size, size,
 	)
 }

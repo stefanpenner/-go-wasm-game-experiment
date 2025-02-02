@@ -19,8 +19,8 @@ func TestRectIntersects(t *testing.T) {
 				+---+-----------+
 			*/
 			name:     "overlapping rectangles",
-			rect1:    Rect{X: 0, Y: 0, Width: 10, Height: 10},
-			rect2:    Rect{X: 5, Y: 5, Width: 10, Height: 10},
+			rect1:    Rect{Point: Point{X: 0, Y: 0}, Width: 10, Height: 10},
+			rect2:    Rect{Point: Point{X: 5, Y: 5}, Width: 10, Height: 10},
 			expected: true,
 		},
 		{
@@ -30,8 +30,8 @@ func TestRectIntersects(t *testing.T) {
 				+-----+          +-----+
 			*/
 			name:     "non-overlapping rectangles",
-			rect1:    Rect{X: 0, Y: 0, Width: 5, Height: 5},
-			rect2:    Rect{X: 10, Y: 10, Width: 5, Height: 5},
+			rect1:    Rect{Point: Point{X: 0, Y: 0}, Width: 5, Height: 5},
+			rect2:    Rect{Point: Point{X: 10, Y: 10}, Width: 5, Height: 5},
 			expected: false,
 		},
 		{
@@ -41,8 +41,8 @@ func TestRectIntersects(t *testing.T) {
 			   +-----+-----+
 			*/
 			name:     "touching rectangles",
-			rect1:    Rect{X: 0, Y: 0, Width: 5, Height: 5},
-			rect2:    Rect{X: 5, Y: 0, Width: 5, Height: 5},
+			rect1:    Rect{Point: Point{X: 0, Y: 0}, Width: 5, Height: 5},
+			rect2:    Rect{Point: Point{X: 5, Y: 0}, Width: 5, Height: 5},
 			expected: false,
 		},
 		{
@@ -55,8 +55,8 @@ func TestRectIntersects(t *testing.T) {
 			  +-----------+
 			*/
 			name:     "one rectangle inside another",
-			rect1:    Rect{X: 0, Y: 0, Width: 10, Height: 10},
-			rect2:    Rect{X: 2, Y: 2, Width: 5, Height: 5},
+			rect1:    Rect{Point: Point{X: 0, Y: 0}, Width: 10, Height: 10},
+			rect2:    Rect{Point: Point{X: 2, Y: 2}, Width: 5, Height: 5},
 			expected: true,
 		},
 	}
