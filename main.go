@@ -7,12 +7,18 @@ import (
 )
 
 const (
-	CanvasWidth   = 400
-	CanvasHeight  = 400
-	WorldWidth    = 800
-	WorldHeight   = 800
 	FrameDuration = 8 // ~7.5 FPS, internet says this is good for this type of animation
 )
+
+type World struct {
+	Width  float64
+	Height float64
+}
+
+type Canvas struct {
+	Width  float64
+	Height float64
+}
 
 type Rect struct {
 	X, Y          float64
@@ -34,7 +40,7 @@ type Player struct {
 	Tick       int
 }
 
-func (p *Player) Update(obstacles []Rect) {
+func (p *Player) Update(w *World, obstacles []Rect) {
 	// save snapshot
 	prevX, prevY := p.X, p.Y
 	moving := false
@@ -64,11 +70,11 @@ func (p *Player) Update(obstacles []Rect) {
 	if p.Y < 0 {
 		p.Y = 0
 	}
-	if p.X > WorldWidth-p.Width {
-		p.X = WorldWidth - p.Width
+	if p.X > w.Width-p.Width {
+		p.X = w.Width - p.Width
 	}
-	if p.Y > WorldHeight-p.Height {
-		p.Y = WorldHeight - p.Height
+	if p.Y > w.Height-p.Height {
+		p.Y = w.Height - p.Height
 	}
 
 	// detect collisions
@@ -133,16 +139,16 @@ func handleKeyUp(p *Player) js.Func {
 	})
 }
 
-func startGameLoop(p *Player, ctx js.Value, obstacles []Rect) {
+func startGameLoop(w *World, c *Canvas, p *Player, ctx js.Value, obstacles []Rect) {
 	var loop js.Func
 	loop = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		Log("tik")
 		// Update player position
-		p.Update(obstacles)
+		p.Update(w, obstacles)
 
 		// Camera follows the player
-		cameraX := p.X - CanvasWidth/2 + p.Width/2
-		cameraY := p.Y - CanvasHeight/2 + p.Height/2
+		cameraX := p.X - c.Width/2 + p.Width/2
+		cameraY := p.Y - c.Height/2 + p.Height/2
 
 		// Keep camera within world bounds
 		if cameraX < 0 {
@@ -151,15 +157,15 @@ func startGameLoop(p *Player, ctx js.Value, obstacles []Rect) {
 		if cameraY < 0 {
 			cameraY = 0
 		}
-		if cameraX > WorldWidth-CanvasWidth {
-			cameraX = WorldWidth - CanvasWidth
+		if cameraX > w.Width-c.Width {
+			cameraX = w.Width - c.Width
 		}
-		if cameraY > WorldHeight-CanvasHeight {
-			cameraY = WorldHeight - CanvasHeight
+		if cameraY > w.Height-c.Height {
+			cameraY = w.Height - c.Height
 		}
 
 		// Clear the canvas
-		ctx.Call("clearRect", 0, 0, CanvasWidth, CanvasHeight)
+		ctx.Call("clearRect", 0, 0, c.Width, c.Height)
 
 		// Draw obstacles
 		ctx.Set("fillStyle", "gray")
@@ -179,9 +185,19 @@ func startGameLoop(p *Player, ctx js.Value, obstacles []Rect) {
 }
 
 func main() {
+	world := &World{
+		Width:  800,
+		Height: 800,
+	}
+
+	canvas := &Canvas{
+		Width:  400,
+		Height: 400,
+	}
+
 	document := js.Global().Get("document")
-	canvas := document.Call("getElementById", "the-canvas")
-	ctx := canvas.Call("getContext", "2d")
+	canvasElement := document.Call("getElementById", "the-canvas")
+	ctx := canvasElement.Call("getContext", "2d")
 
 	player := &Player{
 		Rect:  Rect{X: 10, Y: 10, Width: 30, Height: 30},
@@ -198,7 +214,7 @@ func main() {
 	document.Call("addEventListener", "keydown", handleKeyDown(player))
 	document.Call("addEventListener", "keyup", handleKeyUp(player))
 
-	startGameLoop(player, ctx, obstacles)
+	startGameLoop(world, canvas, player, ctx, obstacles)
 
 	select {}
 }

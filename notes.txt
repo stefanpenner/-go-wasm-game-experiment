@@ -1,0 +1,3 @@
+* infinite map
+* mini map
+* editable map
